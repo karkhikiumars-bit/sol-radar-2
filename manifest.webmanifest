@@ -1,0 +1,16 @@
+{
+  "name": "Sol Radar · رادار سولانا",
+  "short_name": "Sol Radar",
+  "description": "Automated Solana analysis for Binance: buy and sell signals with stop loss and targets · تحلیل خودکار سولانا روی بایننس",
+  "dir": "auto",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A111D",
+  "theme_color": "#0A111D",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
