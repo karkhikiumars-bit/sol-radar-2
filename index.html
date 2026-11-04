@@ -251,6 +251,21 @@ main { padding-block: 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
 .tabs a[aria-current="page"]::before { content: ""; position: absolute; top: -1px; width: 30px; height: 3px; border-radius: 0 0 3px 3px; background: var(--sun); }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(78px + env(safe-area-inset-bottom, 0px)); z-index: 40; width: max-content; max-width: min(520px, calc(100vw - 32px)); background: var(--ink); color: var(--bg); padding: 11px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; box-shadow: var(--shadow); }
 
+/* ---------- mini window (always-on-top picture-in-picture); its colour is the state ---------- */
+.mini-btn { display: inline-flex; align-items: center; gap: 6px; }
+.mini-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 560px) { .mini-btn span { display: none; } .mini-btn { padding-inline: 8px; } }
+.mini { --st: var(--sun); --st-soft: var(--sun-soft); box-sizing: border-box; height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 8px 14px; background: var(--st-soft); color: var(--ink); overflow: hidden; }
+.mini[data-st="buy"] { --st: var(--buy); --st-soft: var(--buy-soft); }
+.mini[data-st="sell"] { --st: var(--sell); --st-soft: var(--sell-soft); }
+.m-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.m-word { font-weight: 900; line-height: 1; color: var(--st); font-size: clamp(28px, 30vh, 110px); }
+:root[lang="en"] .m-word { letter-spacing: .01em; }
+.m-conf { font-size: clamp(12px, 9vh, 26px); color: var(--mute); }
+.m-price { display: flex; align-items: baseline; gap: 8px; font-size: clamp(12px, 11vh, 28px); white-space: nowrap; }
+.m-sym { font-size: .72em; color: var(--faint); font-weight: 700; }
+.m-line { font-size: clamp(10.5px, 7.5vh, 17px); color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
 /* ---------- laptop and desktop: signal beside the chart, context row below, tabs in the header ---------- */
 .s-main, .s-ctx, .blk, .col { display: grid; gap: 14px; min-width: 0; align-content: start; }
 @media (min-width: 1000px) {
@@ -303,6 +318,7 @@ main { padding-block: 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
         <div><b data-t="brand">رادار سولانا</b><small><span class="num">SOL/USDT</span> · <span data-t="binance">بایننس</span></small></div>
       </div>
       <div class="bar-end">
+        <button class="lang mini-btn" id="mini-btn" type="button" data-act="mini" data-t-aria="miniBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><rect x="12" y="11" width="7" height="6" rx="1"/></svg><span data-t="miniBtn">پنجره کوچک</span></button>
         <button class="lang" id="lang" type="button" data-act="lang" lang="en">English</button>
         <div class="status" id="status" data-s="connecting"><i></i><span>در حال اتصال</span></div>
       </div>
@@ -1067,16 +1083,23 @@ const TX = {
   nTp: ['هدف {0} خورد', 'Target {0} hit'],
   nTp1Body: ['حد ضرر را به نقطه ورود ({0}) ببر', 'Move the stop to entry ({0})'],
   nTp2Body: ['حد ضرر را به هدف ۱ ({0}) ببر', 'Move the stop to target 1 ({0})'],
-  nClosedWin: ['معامله با سود بسته شد', 'Trade closed in profit'], nClosed: ['معامله بسته شد', 'Trade closed'],
   nResult: ['نتیجه {0}R · {1}', 'Result {0}R · {1}'],
   reason_tp3: ['هدف ۳', 'Target 3'], reason_stop: ['حد ضرر', 'Stop loss'], reason_be: ['سر به سر بعد از هدف ۱', 'Break-even after target 1'],
   reason_trail: ['برگشت به هدف ۱', 'Back to target 1'], reason_time: ['پایان ۷۲ ساعت', '72-hour limit'], reason_opposite: ['سیگنال مخالف', 'Opposite signal'],
-  touchTp: ['قیمت به هدف {0} رسید ({1})', 'Price reached target {0} ({1})'],
-  touchTp1Body: ['یک‌سوم را ببند و حد ضرر را به نقطه ورود ببر.', 'Close one third and move the stop to entry.'],
-  touchTp2Body: ['یک‌سوم دیگر را ببند و حد ضرر را به هدف ۱ ببر.', 'Close another third and move the stop to target 1.'],
-  touchSl: ['قیمت به حد ضرر رسید ({0})', 'Price reached the stop ({0})'],
-  touchSlBe: ['بقیه معامله بدون ضرر بسته می‌شود.', 'The rest of the trade closes without a loss.'],
-  touchSlBody: ['طبق برنامه از معامله خارج شو.', 'Exit the trade as planned.'],
+  nWaitStop: ['صبر — حد ضرر خورد', 'WAIT — stop loss hit'], nWaitWin: ['صبر — معامله با سود بسته شد', 'WAIT — trade closed in profit'],
+  nWaitClosed: ['صبر — معامله بسته شد', 'WAIT — trade closed'], nWaitInvalid: ['صبر — سیگنال باطل شد', 'WAIT — signal cancelled'],
+  nInvalidBody: ['قیمت از حد ضرر {0} رد شد.', 'Price went past the stop at {0}.'],
+  nWaitPlain: ['حالا: صبر', 'Now: WAIT'], nWaitBody: ['سیگنال قبلی دیگر معتبر نیست؛ منتظر ستاپ بعدی بمان.', 'The previous signal is no longer valid; wait for the next setup.'],
+  nOpen: ['{0} · {1} — معامله باز است', '{0} · {1} — trade open'], nOpenBody: ['ورود {0} · حد ضرر {1}', 'Entry {0} · stop {1}'],
+  nPrevClosed: [' · معامله قبلی بسته شد', ' · the previous trade was closed'],
+  miniBtn: ['پنجره کوچک', 'Mini window'], miniTitle: ['پنجره شناور', 'Floating mini window'], miniOpen: ['باز کردن پنجره کوچک', 'Open the mini window'],
+  miniHelp: ['یک پنجره کوچک که همیشه روی بقیه پنجره‌ها می‌ماند و فقط خرید، فروش یا صبر را نشان می‌دهد؛ رنگش هم با حالت عوض می‌شود. جابه‌جا و بزرگ و کوچکش کن. تا وقتی اپ باز است کار می‌کند و خود اپ را می‌توانی کوچک کنی. هر بار که اپ را باز می‌کنی، یک بار روی این دکمه بزن. فقط در Chrome یا Edge روی کامپیوتر.', 'A small window that stays on top of every other window and shows only BUY, SELL or WAIT, in the colour of the state. Move and resize it as you like. It works while the app is open, and you can minimize the app itself. Press this button once each time you open the app. Chrome or Edge on a computer only.'],
+  miniUnsupported: ['این مرورگر پنجره شناور ندارد. از Chrome یا Edge روی کامپیوتر استفاده کن.', "This browser can't open a floating window. Use Chrome or Edge on a computer."],
+  miniFailed: ['پنجره کوچک باز نشد. دوباره روی دکمه بزن.', "The mini window didn't open. Press the button again."],
+  miniNext: ['بررسی بعدی تا {0} دیگر', 'Next check in {0}'], miniSig: ['ورود {0} · ضرر {1} · هدف {2}', 'Entry {0} · stop {1} · target {2}'],
+  miniOpenTrade: ['از {0} · ضرر {1} · هدف {2}', 'From {0} · stop {1} · target {2}'], miniSpot: ['فروش {0} · خرید دوباره {1}', 'Sell {0} · buy back {1}'],
+  miniClosed: ['معامله بسته شد · {0}', 'Trade closed · {0}'], miniInvalid: ['سیگنال باطل شد', 'Signal cancelled'],
+  miniLoading: ['اسکن…', 'Scanning…'], miniOffline: ['قطع', 'Offline'], f_event: ['آخرین اتفاق', 'Just happened'],
   noNotif: ['این مرورگر اعلان را پشتیبانی نمی‌کند. برای اعلان مطمئن، ربات تلگرام را راه بینداز.', "This browser doesn't support notifications. For reliable alerts, set up the Telegram bot."],
   notifOnTitle: ['اعلان‌ها روشن شد', 'Notifications are on'],
   notifOnBody: ['تا وقتی اپ باز است، سیگنال‌ها و هشدارها اینجا هم اعلان می‌شوند.', 'While the app is open, signals and alerts also arrive as notifications.'],
@@ -1228,6 +1251,8 @@ function applyLang(l) {
   if (!S.t24) $('#hl').textContent = t('hlInit');
   document.title = (S.price ? fp(S.price) + ' · ' : '') + t('brand');
   setLive(S.live);
+  $('#mini-btn').hidden = !pipOK();
+  syncMiniDoc(); renderMini();
 }
 function switchLang(l) {
   if (l === LANG) return;
@@ -1372,7 +1397,9 @@ function setTicker(p, t24) {
     const c = arr[arr.length - 1];
     if (c && now >= c.t && now <= c.T) { c.c = p; if (p > c.h) c.h = p; if (p < c.l) c.l = p; }
   }
-  if (S.prev) { checkAlerts(p); liveTradeCheck(p); }
+  if (S.prev) checkAlerts(p);
+  if (S.status === 'ok') updateLive(false);
+  renderMini();
   scheduleRender();
 }
 
@@ -1388,7 +1415,7 @@ function analyze(initial) {
   S.tf15 = m15.length > 80 ? E.tfInfo(m15, E.computeIndicators(m15), m15.length - 1) : null;
   Object.assign(S, { ctx, bt, ev, analyzedAt: now, lastClosedT: h1[h1.length - 1].t, reasons: {} });
   S.card = makeCard();
-  if (initial) markSeen(); else announce();
+  updateLive(initial);
 }
 function makeCard() {
   const bt = S.bt, open = bt.open, pend = bt.pending;
@@ -1405,47 +1432,68 @@ function reasonsFor(o) {
   }
   return S.reasons[o.sigT] || [];
 }
-function markSeen() {
-  const c = S.card, bt = S.bt;
-  S.seen = {
-    sig: c.kind === 'new' ? c.o.t : (S.seen.sig || 0),
-    trade: bt.open ? bt.open.entryT : 0, hit: bt.open ? bt.open.hit : 0,
-    touch: S.seen.touch || {}
-  };
+// What the screen shows: the hourly analysis moved forward by the hour that is still forming, so a stop or a
+// target hit inside the hour counts at once. It uses the same rule the hourly check applies when the candle closes.
+function liveCard() {
+  const c = S.card;
+  if (!c || c.kind === 'wait' || S.status !== 'ok') return c;
+  const now = Date.now(), bars = S.h1.filter((b) => b.t > S.lastClosedT && b.t <= now);
+  if (!bars.length) return c;
+  if (c.kind === 'active') {
+    const o = JSON.parse(JSON.stringify(c.o));
+    for (const b of bars) {
+      E.trade.manage(o, { t: b.t, o: b.o, h: b.h, l: b.l, c: b.c }, 0, Infinity);
+      if (o.closed) break;
+    }
+    return o.closed ? { kind: 'wait', closedLive: E.trade.finish(o) } : { kind: 'active', o };
+  }
+  const o = c.o;
+  for (const b of bars) { if (o.dir > 0 ? b.l <= o.stop : b.h >= o.stop) return { kind: 'wait', invalid: o }; }
+  return c;
+}
+const shownCard = () => S.liveCard || S.card;
+function stateOf(c) {
+  if (!c || c.kind === 'wait') return 'wait';
+  return c.o.dir > 0 ? 'buy' : (S.set.mode === 'spot' ? 'sell' : 'short');
+}
+const WORD = { buy: 'w_buy', sell: 'w_sell', short: 'w_short', wait: 'w_wait' };
+// Compares the state on screen with the last one and sends one notification per change.
+function updateLive(initial) {
+  if (!S.card) return;
+  const card = liveCard(), st = stateOf(card), tr = card && card.kind === 'active' ? card.o : null;
+  S.liveCard = card;
+  const seen = S.seen || {};
+  const next = { state: st, trade: tr ? tr.entryT : 0, hit: tr ? tr.hit : 0, sig: card && card.kind === 'new' ? card.o.t : 0 };
+  if (!initial && seen.state) {
+    if (tr && tr.entryT === seen.trade) {
+      for (let k = seen.hit || 0; k < Math.min(tr.hit, 2); k++) {
+        notify(t('nTp', dg(k + 1)), t(k === 0 ? 'nTp1Body' : 'nTp2Body', fp(k === 0 ? tr.entry : tr.tps[0])), 'tp-' + tr.entryT + '-' + k, tr.dir > 0 ? 'buy' : 'sell');
+      }
+    }
+    if (st !== seen.state || (next.sig && next.sig !== seen.sig)) notifyState(seen, st, card);
+  }
+  S.seen = next;
   store.set('seen', S.seen);
 }
-function announce() {
-  const c = S.card, bt = S.bt, prev = S.seen || {};
-  if (c.kind === 'new' && prev.sig !== c.o.t) {
-    const o = c.o, spot = o.dir < 0 && S.set.mode === 'spot';
-    const word = t(o.dir > 0 ? 'w_buy' : (spot ? 'w_sell' : 'w_short'));
-    notify(t('nSig', word, BASE, o.conf),
-      spot ? t('nSpotBody', fp(o.entry), fp(o.tps[0]), fp(o.tps[1])) : t('nBody', fp(o.zone[0]), fp(o.zone[1]), fp(o.stop), fp(o.tps[0])),
-      'sig-' + o.t, o.dir > 0 ? 'buy' : 'sell');
+function notifyState(seen, st, card) {
+  const word = t(WORD[st]);
+  if (st !== 'wait') {
+    const o = card.o;
+    let body = card.kind === 'new'
+      ? (st === 'sell' ? t('nSpotBody', fp(o.entry), fp(o.tps[0]), fp(o.tps[1])) : t('nBody', fp(o.zone[0]), fp(o.zone[1]), fp(o.stop), fp(o.tps[0])))
+      : t('nOpenBody', fp(o.entry), fp(o.stopNow));
+    if (seen.state !== 'wait' && seen.state !== st) body += t('nPrevClosed');
+    notify(card.kind === 'new' ? t('nSig', word, BASE, o.conf) : t('nOpen', word, BASE), body, 'state-' + st + '-' + (o.t || o.entryT), o.dir > 0 ? 'buy' : 'sell');
+    return;
   }
-  if (bt.open && bt.open.entryT === prev.trade && bt.open.hit > (prev.hit || 0)) {
-    for (let k = prev.hit || 0; k < bt.open.hit; k++) {
-      if (!(S.seen.touch || {})[bt.open.entryT + ':' + k]) notify(t('nTp', dg(k + 1)), k === 0 ? t('nTp1Body', fp(bt.open.entry)) : t('nTp2Body', fp(bt.open.tps[0])), 'tp-' + bt.open.entryT + k, 'buy');
-    }
-  }
-  if (prev.trade && (!bt.open || bt.open.entryT !== prev.trade)) {
-    const done = bt.trades.find((x) => x.entryT === prev.trade);
-    if (done) notify(t(done.r > 0 ? 'nClosedWin' : 'nClosed'), t('nResult', sgn(done.r, 2), t('reason_' + done.reason)), 'close-' + done.entryT, done.r > 0 ? 'buy' : 'sell');
-  }
-  markSeen();
-}
-function liveTradeCheck(p) {
-  const o = S.bt && S.bt.open;
-  if (!o) return;
-  S.seen.touch = S.seen.touch || {};
-  const k = o.hit, key = o.entryT + ':' + k, sk = o.entryT + ':sl';
-  if (k < 3 && !S.seen.touch[key] && (o.dir > 0 ? p >= o.tps[k] : p <= o.tps[k])) {
-    S.seen.touch[key] = 1; store.set('seen', S.seen);
-    notify(t('touchTp', dg(k + 1), fp(o.tps[k])), t(k === 0 ? 'touchTp1Body' : 'touchTp2Body'), 'touch-' + key, 'buy');
-  }
-  if (!S.seen.touch[sk] && (o.dir > 0 ? p <= o.stopNow : p >= o.stopNow)) {
-    S.seen.touch[sk] = 1; store.set('seen', S.seen);
-    notify(t('touchSl', fp(o.stopNow)), t(o.hit ? 'touchSlBe' : 'touchSlBody'), 'touch-' + sk, 'sell');
+  const done = card && card.closedLive ? card.closedLive
+    : (seen.trade && S.bt ? S.bt.trades.find((x) => x.entryT === seen.trade) : null);
+  if (done) {
+    notify(t(done.reason === 'stop' ? 'nWaitStop' : done.r > 0 ? 'nWaitWin' : 'nWaitClosed'), t('nResult', sgn(done.r, 2), t('reason_' + done.reason)), 'state-close-' + done.entryT, done.r > 0 ? 'buy' : 'sell');
+  } else if (card && card.invalid) {
+    notify(t('nWaitInvalid'), t('nInvalidBody', fp(card.invalid.stop)), 'state-void-' + card.invalid.t, 'sell');
+  } else {
+    notify(t('nWaitPlain'), t('nWaitBody'), 'state-wait-' + Date.now(), 'sell');
   }
 }
 
@@ -1574,8 +1622,8 @@ function trackHTML(o, p) {
     <i class="me" style="left:${fpz}%"></i></div>`;
 }
 function ticketHTML() {
-  const c = S.card, p = S.price;
-  if (c.kind === 'wait') return waitHTML();
+  const c = shownCard(), p = S.price;
+  if (!c || c.kind === 'wait') return waitHTML(c);
   const o = c.o, isNew = c.kind === 'new', dir = o.dir;
   const spotSell = isNew && dir < 0 && S.set.mode === 'spot';
   const word = t(dir > 0 ? 'w_buy' : (S.set.mode === 'spot' ? 'w_sell' : 'w_short'));
@@ -1608,10 +1656,12 @@ function ticketHTML() {
     <div class="why"><h3>${t('whyTitle')}</h3><ul>${reasons.map((r) => `<li class="${r[1] < 0 ? 'neg' : ''}">${r[0]}</li>`).join('')}</ul></div>
   </article>`;
 }
-function waitHTML() {
+function waitHTML(c) {
   const ev = S.ev, z = ev.zones, sup = z.supports[0], res = z.resistances[0];
   const sigs = S.bt.signals, last = sigs[sigs.length - 1];
   const facts = [];
+  if (c && c.closedLive) facts.push([t('f_event'), `${t('reason_' + c.closedLive.reason)} · ${N(sgn(c.closedLive.r, 2) + 'R')}`]);
+  if (c && c.invalid) facts.push([t('f_event'), t('miniInvalid')]);
   facts.push([t('f_bias'), `${ev.biasLabel} ${N(sgn(ev.bias, 0))}`]);
   facts.push([t('f_sup'), sup ? `${N(fp(sup.price))} <span class="faint">${N(pc(dist(sup.price)))}</span>` : '—']);
   facts.push([t('f_res'), res ? `${N(fp(res.price))} <span class="faint">${N(pc(dist(res.price)))}</span>` : '—']);
@@ -1733,7 +1783,7 @@ function indicatorsHTML() {
 }
 function niceStep(raw) { const p = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / p; return (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * p; }
 function tradeLevels() {
-  const c = S.card; if (!c || c.kind === 'wait') return [];
+  const c = shownCard(); if (!c || c.kind === 'wait') return [];
   const o = c.o, isNew = c.kind === 'new', out = [];
   const col = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   if (isNew && o.dir < 0 && S.set.mode === 'spot') { out.push({ p: o.entry, c: col('--ink'), l: 'SELL' }); o.tps.forEach((tp, k) => out.push({ p: tp, c: col('--buy'), l: 'RE' + (k + 1) })); return out; }
@@ -1881,7 +1931,7 @@ function seg(name, opts, cur) {
   return `<div class="seg" role="group">${opts.map(([v, l, lg]) => `<button type="button" data-set="${name}" data-val="${v}" aria-pressed="${String(cur) === String(v)}"${lg ? ` lang="${lg}"` : ''}>${l}</button>`).join('')}</div>`;
 }
 function calcDefaults() {
-  const c = S.card;
+  const c = shownCard();
   if (c && c.kind === 'new' && !(c.o.dir < 0 && S.set.mode === 'spot')) {
     return { entry: E.round(c.o.entry, 2), stop: c.o.stop, tps: c.o.tps, from: 'signal' };
   }
@@ -1924,6 +1974,7 @@ function renderTools() {
       <div class="setting"><span class="k">${t('s_theme')}</span>${seg('theme', [['system', t('s_auto')], ['light', t('s_light')], ['dark', t('s_dark')]], S.set.theme)}</div>
       <div class="setting"><span class="k">${t('s_sound')}</span>${seg('sound', [['true', t('on')], ['false', t('off')]], S.set.sound)}</div>
       <div class="setting"><span class="k">${t('s_notif')}</span>${notifCtl}<span class="h">${t('notifHelp')}</span></div>
+      ${pipOK() ? `<div class="setting"><span class="k">${t('miniTitle')}</span><button class="btn" type="button" data-act="mini">${t('miniOpen')}</button><span class="h">${t('miniHelp')}</span></div>` : ''}
       ${deferredInstall ? `<div class="setting"><span class="k">${t('s_install')}</span><button class="btn" type="button" data-act="install">${t('installBtn')}</button><span class="h">${t('installHelp')}</span></div>` : ''}
       ${!standalone && ios ? `<div class="setting"><span class="k">${t('s_ios')}</span><span class="h">${t('iosHelp')}</span></div>` : ''}
       ${!standalone && macSafari ? `<div class="setting"><span class="k">${t('s_mac')}</span><span class="h">${t('macHelp')}</span></div>` : ''}
@@ -1964,6 +2015,62 @@ function calcUpdate() {
 function applyTheme() {
   const th = S.set.theme;
   if (th === 'light' || th === 'dark') document.documentElement.dataset.theme = th; else delete document.documentElement.dataset.theme;
+  syncMiniDoc();
+}
+
+// ------------------------------------------------------------------ mini window
+// Document Picture-in-Picture: a small window that Chrome and Edge keep above every other window.
+let pip = null;
+function pipOK() { return 'documentPictureInPicture' in window; }
+async function openMini() {
+  unlockAudio();
+  if (!pipOK()) { toast(t('miniUnsupported')); return; }
+  if (pip && !pip.closed) { try { pip.focus(); } catch (e) { /* ignore */ } return; }
+  try { pip = await window.documentPictureInPicture.requestWindow({ width: 270, height: 150 }); }
+  catch (e) { pip = null; toast(t('miniFailed')); return; }
+  const d = pip.document;
+  document.querySelectorAll('link[rel="stylesheet"], style').forEach((n) => d.head.appendChild(n.cloneNode(true)));
+  d.documentElement.style.height = '100%';
+  d.body.style.margin = '0'; d.body.style.height = '100%';
+  d.body.innerHTML = '<div class="mini" id="mini" data-st="wait"></div>';
+  pip.addEventListener('pagehide', () => { pip = null; });
+  syncMiniDoc();
+  renderMini();
+}
+function syncMiniDoc() {
+  if (!pip) return;
+  const r = pip.document.documentElement;
+  r.lang = LANG; r.dir = LANG === 'fa' ? 'rtl' : 'ltr';
+  if (document.documentElement.dataset.theme) r.dataset.theme = document.documentElement.dataset.theme; else delete r.dataset.theme;
+  pip.document.title = t('brand');
+}
+function miniState() {
+  if (S.status === 'loading') return { st: 'wait', word: t('miniLoading'), line: '' };
+  if (S.status === 'error') return { st: 'wait', word: t('miniOffline'), line: t('noConn') };
+  const c = shownCard(), st = stateOf(c);
+  const m = { st: st === 'buy' ? 'buy' : st === 'wait' ? 'wait' : 'sell', word: t(WORD[st]), conf: null, line: '' };
+  if (st === 'wait') {
+    if (c && c.closedLive) m.line = t('miniClosed', N(sgn(c.closedLive.r, 2) + 'R'));
+    else if (c && c.invalid) m.line = t('miniInvalid');
+    else m.line = t('miniNext', N(countdown()));
+    return m;
+  }
+  const o = c.o;
+  m.conf = o.conf;
+  if (c.kind === 'new') m.line = st === 'sell' ? t('miniSpot', N(fp(o.entry)), N(fp(o.tps[0]))) : t('miniSig', N(fp(o.entry)), N(fp(o.stop)), N(fp(o.tps[0])));
+  else m.line = t('miniOpenTrade', N(fp(o.entry)), N(fp(o.stopNow)), N(fp(o.tps[Math.min(o.hit, 2)])));
+  return m;
+}
+function renderMini() {
+  if (!pip) return;
+  const el = pip.document.getElementById('mini');
+  if (!el) return;
+  const m = miniState();
+  const ch = S.t24 && S.t24.o && S.price ? (S.price / S.t24.o - 1) * 100 : null;
+  el.dataset.st = m.st;
+  el.innerHTML = `<div class="m-top"><span class="m-word">${m.word}</span>${m.conf ? `<span class="m-conf num">${m.conf}%</span>` : ''}</div>
+    <div class="m-price"><span class="m-sym">SOL</span><span class="num">${S.price ? fp(S.price) : '—'}</span>${ch == null ? '' : `<span class="num ${ch >= 0 ? 'up' : 'down'}">${pc(ch, 2)}</span>`}</div>
+    ${m.line ? `<div class="m-line">${m.line}</div>` : ''}`;
 }
 // On a wide screen (laptop) the signal and the chart share one view.
 const WIDE = window.matchMedia('(min-width: 1000px)');
@@ -1997,6 +2104,7 @@ document.addEventListener('click', (e) => {
   }
   const act = b.dataset.act;
   if (act === 'lang') switchLang(LANG === 'fa' ? 'en' : 'fa');
+  if (act === 'mini') openMini();
   if (act === 'retry') boot();
   if (act === 'calc') { S.calc = null; location.hash = '#tools'; }
   if (act === 'calc-reset') { S.calc = null; renderTools(); }
@@ -2046,6 +2154,7 @@ async function refresh() {
 }
 setInterval(() => {
   document.querySelectorAll('[data-countdown]').forEach((el) => { el.textContent = countdown(); });
+  renderMini();
   const sinceClose = Date.now() % H;
   if (S.status === 'ok' && sinceClose > 8000 && sinceClose < 15000 && Date.now() - (S.lastRefresh || 0) > 20000) refresh();
 }, 1000);
