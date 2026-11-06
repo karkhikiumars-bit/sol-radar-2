@@ -1,6 +1,6 @@
 // Sol Radar service worker: keeps the app shell available offline and opens the app from a notification.
-// Market data is never cached; it always comes live from Binance.
-const CACHE = 'sol-radar-v2';
+// Market data is never cached; it always comes live from Binance and the other sources.
+const CACHE = 'sol-radar-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {

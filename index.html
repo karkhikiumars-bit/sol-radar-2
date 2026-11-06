@@ -195,6 +195,52 @@ main { padding-block: 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
 .stat .v { font-size: 18px; line-height: 1.4; }
 .stat .h { font-size: 12px; color: var(--faint); line-height: 1.55; }
 
+/* ---------- fundamentals & sentiment ---------- */
+.fund { display: grid; gap: 12px; }
+.fng-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.fng-top .k { font-size: 12.5px; color: var(--mute); font-weight: 650; }
+.fng-top .v { font-size: 14px; font-weight: 750; }
+.fng-top .v .num { font-size: 20px; margin-inline-end: 4px; }
+/* the two extremes are where the index changes a signal, so only they are tinted */
+.fng-bar { position: relative; height: 8px; border-radius: 4px; margin: 9px 0 5px; direction: ltr;
+  background: linear-gradient(90deg, var(--sun-soft) 0 24%, var(--sunk) 24% 76%, var(--sun-soft) 76% 100%); }
+.fng-bar::before, .fng-bar::after { content: ""; position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--sun); opacity: .5; }
+.fng-bar::before { left: 24%; } .fng-bar::after { left: 76%; }
+.fng-bar i { position: absolute; top: -4px; width: 16px; height: 16px; border-radius: 50%; background: var(--card); border: 3px solid var(--ink); transform: translateX(-50%); box-shadow: var(--shadow); }
+.fng-scale { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--faint); direction: ltr; }
+.frows { display: grid; }
+.frow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; padding: 8px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.frow .k { font-size: 13px; color: var(--mute); grid-row: span 2; align-self: center; }
+.frow .v { font-size: 15px; text-align: end; }
+.frow .h { font-size: 11.5px; color: var(--faint); text-align: end; }
+.fuse { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: var(--sunk); font-size: 13px; line-height: 1.6; }
+.fuse > div { display: flex; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; }
+.fuse .k { color: var(--mute); }
+.frules summary { cursor: pointer; font-size: 12px; color: var(--faint); list-style: none; }
+.frules summary::-webkit-details-marker { display: none; }
+.frules summary::after { content: " ⓘ"; }
+.frules p { margin: 6px 0 0; font-size: 12.5px; line-height: 1.85; color: var(--mute); }
+/* ---------- news from the bot ---------- */
+.news { display: grid; }
+.hold { background: var(--sun-soft); border-radius: 10px; padding: 9px 12px; font-size: 13.5px; font-weight: 750; line-height: 1.6; margin-bottom: 6px; }
+.hold small { display: block; font-weight: 400; color: var(--mute); font-size: 12px; margin-top: 2px; }
+.nrow { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; line-height: 1.6; }
+.nrow:last-child { border-bottom: 0; }
+.nrow a { text-decoration: none; } .nrow a:hover { text-decoration: underline; }
+.nrow small { display: block; color: var(--faint); font-size: 11.5px; margin-top: 2px; }
+.ndot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); margin-top: 8px; }
+.ndot.pos { background: var(--buy); } .ndot.neg { background: var(--sell); }
+/* ---------- with / without test ---------- */
+.ab { display: grid; gap: 10px; }
+.abt { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 7px 22px; align-items: baseline; }
+.abt .h { font-size: 12px; color: var(--faint); font-weight: 750; text-align: end; }
+.abt .k { color: var(--mute); font-size: 13px; }
+.abt .v { text-align: end; font-size: 15px; color: var(--mute); }
+.abt .v.sel { color: var(--ink); font-weight: 650; }
+.abv { font-size: 13.5px; line-height: 1.8; color: var(--mute); }
+.brow { display: flex; gap: 8px; flex-wrap: wrap; } .brow .btn { flex: 1 1 120px; }
+.bstat { margin: 0; font-size: 12.5px; color: var(--mute); }
+
 /* ---------- chart ---------- */
 .seg { display: inline-flex; background: var(--sunk); border-radius: 12px; padding: 3px; gap: 2px; flex-wrap: wrap; }
 .seg button { border: 0; background: transparent; padding: 7px 14px; border-radius: 9px; font-weight: 750; font-size: 13px; color: var(--mute); cursor: pointer; }
@@ -277,8 +323,8 @@ main { padding-block: 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
   main.duo .s-main { grid-area: tk; }
   main.duo > #v-chart { grid-area: ch; }
   main.duo .s-ctx { grid-area: cx; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
-  main.duo .s-ctx > .blk:nth-child(3), main.duo .s-note { grid-column: 1 / -1; }
-  main.duo .s-ctx > .blk:nth-child(3) .mood { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  main.duo .s-note, main.duo .s-ctx.has-news > .b-mood { grid-column: 1 / -1; }
+  main.duo .s-ctx.has-news > .b-mood .mood { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   main.duo .only-narrow { display: none; }
   #chart { height: 468px; }
   #v-stats, #v-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
@@ -295,8 +341,9 @@ main { padding-block: 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (min-width: 1180px) {
   main.duo .s-ctx { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  main.duo .s-ctx > .blk:nth-child(3) { grid-column: auto; }
-  main.duo .s-ctx > .blk:nth-child(3) .mood { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main.duo .s-ctx > .b-mood, main.duo .s-ctx.has-news > .b-mood { grid-column: span 2; }
+  main.duo .s-ctx:not(.has-news) > .b-mood { grid-column: 1 / -1; }
+  main.duo .s-ctx > .b-mood .mood { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   main.duo .radar { grid-template-columns: minmax(0, 1fr); }
   .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
@@ -349,7 +396,7 @@ main { padding-block: 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>/*!
- * Sol Radar engine v1.0
+ * Sol Radar engine v1.1
  * Shared by the phone app and both bots (Google Apps Script and Node).
  * Plain ES2017, no dependencies. Every decision is made on CLOSED candles only,
  * so the live signal, the bot and the backtest always agree with each other.
@@ -357,7 +404,7 @@ main { padding-block: 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
 var SolEngine = (function () {
   'use strict';
 
-  var VERSION = '1.0.0';
+  var VERSION = '1.1.0';
   var MS = { '1m': 6e4, '5m': 3e5, '15m': 9e5, '1h': 36e5, '4h': 144e5, '1d': 864e5 };
   var LRM = '‎';
 
@@ -405,8 +452,13 @@ var SolEngine = (function () {
         btcWith: 'بیت‌کوین هم‌جهت حرکت می‌کند', btcAgainst: 'بیت‌کوین خلاف جهت حرکت می‌کند',
         roomUp: 'تا مقاومت بعدی فضای کافی هست', roomDown: 'تا حمایت بعدی فضای کافی هست',
         nearRes: 'مقاومت نزدیک است: {0}', nearSup: 'حمایت نزدیک است: {0}',
-        rsiHigh: 'RSI در اشباع خرید است ({0})', rsiLow: 'RSI در اشباع فروش است ({0})'
-      }
+        rsiHigh: 'RSI در اشباع خرید است ({0})', rsiLow: 'RSI در اشباع فروش است ({0})',
+        fngHot: 'شاخص ترس و طمع {0} است (طمع شدید)؛ در این حالت خریدها معمولاً دیرند و اصلاح تند زیاد پیش می‌آید',
+        fngCold: 'شاخص ترس و طمع {0} است (ترس شدید)؛ در این حالت فروش‌ها معمولاً دیرند و برگشت تند زیاد پیش می‌آید',
+        liqUp: 'استیبل‌کوین‌های شبکه سولانا در ۳۰ روز {0} تغییر کرده‌اند؛ پول تازه وارد می‌شود',
+        liqDown: 'استیبل‌کوین‌های شبکه سولانا در ۳۰ روز {0} تغییر کرده‌اند؛ پول در حال خروج است'
+      },
+      fng: ['ترس شدید', 'ترس', 'خنثی', 'طمع', 'طمع شدید']
     },
     en: {
       trend: ['Strong uptrend', 'Uptrend', 'Neutral', 'Downtrend', 'Strong downtrend'],
@@ -429,8 +481,13 @@ var SolEngine = (function () {
         btcWith: 'Bitcoin is moving the same way', btcAgainst: 'Bitcoin is moving the other way',
         roomUp: 'Plenty of room to the next resistance', roomDown: 'Plenty of room to the next support',
         nearRes: 'Resistance is close: {0}', nearSup: 'Support is close: {0}',
-        rsiHigh: 'RSI is overbought ({0})', rsiLow: 'RSI is oversold ({0})'
-      }
+        rsiHigh: 'RSI is overbought ({0})', rsiLow: 'RSI is oversold ({0})',
+        fngHot: 'Fear & Greed is {0} (extreme greed): buyers are usually late here and sharp pullbacks are common',
+        fngCold: 'Fear & Greed is {0} (extreme fear): sellers are usually late here and sharp bounces are common',
+        liqUp: 'Stablecoins on Solana changed {0} in 30 days: fresh money is coming in',
+        liqDown: 'Stablecoins on Solana changed {0} in 30 days: money is leaving'
+      },
+      fng: ['Extreme fear', 'Fear', 'Neutral', 'Greed', 'Extreme greed']
     }
   };
   function setLang(l) { LANG = String(l || '').toLowerCase().indexOf('en') === 0 ? 'en' : 'fa'; return LANG; }
@@ -669,9 +726,10 @@ var SolEngine = (function () {
     return out;
   }
 
-  // data: { h1, h4, d1, btc4h } arrays of CLOSED candles, oldest first
+  // data: { h1, h4, d1, btc4h } arrays of CLOSED candles, oldest first; optional data.fund (see fundamentals)
   function buildContext(data) {
     var ctx = { h1: data.h1 || [], h4: data.h4 || [], d1: data.d1 || [], btc: (data.btc4h && data.btc4h.length) ? data.btc4h : null };
+    ctx.fund = prepFund(data.fund);
     ctx.i1 = computeIndicators(ctx.h1);
     ctx.i4 = computeIndicators(ctx.h4);
     ctx.iD = computeIndicators(ctx.d1);
@@ -684,6 +742,126 @@ var SolEngine = (function () {
     ctx.piv4 = pivots(ctx.i4.high, ctx.i4.low, 3, 3);
     ctx.pivD = pivots(ctx.iD.high, ctx.iD.low, 3, 3);
     return ctx;
+  }
+
+  // -------------------------------------------------- fundamentals & sentiment
+  // Daily context from free public data: the crypto Fear & Greed Index (alternative.me) and the dollar
+  // liquidity on Solana (stablecoins on the chain, DefiLlama). A number is only used once it had been
+  // published at that hour, so the backtest sees exactly what the live system would have seen.
+  // It never creates a signal by itself; it nudges the confidence of a technical setup:
+  //   buy  while Fear & Greed >= 76 (extreme greed) ...................... -6
+  //   sell while Fear & Greed <= 24 (extreme fear) ....................... -6
+  //   stablecoins on Solana up >= 10% in 30 days ........ buy +3 · sell -3
+  //   stablecoins on Solana down >= 10% in 30 days ...... buy -3 · sell +3
+  // in total between -8 and +3. Whether it is used at all is decided by fundTest (with vs without).
+  var DAY = 864e5;
+  var FUND_SRC = {
+    fng: 'https://api.alternative.me/fng/?limit=',
+    stable: 'https://stablecoins.llama.fi/stablecoincharts/Solana',
+    tvl: 'https://api.llama.fi/v2/historicalChainTvl/Solana',
+    dex: 'https://api.llama.fi/overview/dexs/Solana?excludeTotalDataChart=false&excludeTotalDataChartBreakdown=true&dataType=dailyVolume'
+  };
+  var FUND_RULE = { hot: 76, cold: 24, crowd: -6, liq: 10, liqAdj: 3, min: -8, max: 3 };
+  var FNG_LAG = 36e5;        // the index for day D is published shortly after 00:00 UTC on day D
+  var LLAMA_LAG = DAY + 36e5; // DefiLlama's number for day D is only final once day D is over
+
+  function byT(a, b) { return a.t - b.t; }
+  function cleanSeries(arr) {
+    var out = [], last = -1;
+    arr.sort(byT);
+    for (var k = 0; k < arr.length; k++) {
+      var x = arr[k];
+      if (!isNum(x.t) || !isNum(x.v) || x.t === last) continue;
+      out.push(x); last = x.t;
+    }
+    return out;
+  }
+  var FNG_CLASS = { 'extreme fear': 0, 'fear': 1, 'neutral': 2, 'greed': 3, 'extreme greed': 4 };
+  function fngClass(v, label) {
+    var c = FNG_CLASS[String(label || '').toLowerCase()];
+    if (c !== undefined) return c;
+    return v < 25 ? 0 : v < 47 ? 1 : v < 55 ? 2 : v < 76 ? 3 : 4;
+  }
+  function fngLabel(v, c) { return TXT[LANG].fng[isNum(c) ? c : fngClass(v)]; }
+  // parsers: raw API payload -> [{t (ms, UTC day start), v}] oldest first
+  var parseFund = {
+    fng: function (j) {
+      if (!j || !Array.isArray(j.data)) throw new Error('fear & greed: bad response');
+      return cleanSeries(j.data.map(function (x) { var v = +x.value; return { t: +x.timestamp * 1000, v: v, c: fngClass(v, x.value_classification) }; }));
+    },
+    stable: function (j) {
+      if (!Array.isArray(j)) throw new Error('stablecoins: bad response');
+      return cleanSeries(j.map(function (x) {
+        var s = x.totalCirculatingUSD || x.totalCirculating || {}, v = 0;
+        for (var k in s) { if (s.hasOwnProperty(k) && isNum(+s[k])) v += +s[k]; }
+        return { t: +x.date * 1000, v: v };
+      }).filter(function (x) { return x.v > 0; }));
+    },
+    tvl: function (j) {
+      if (!Array.isArray(j)) throw new Error('tvl: bad response');
+      return cleanSeries(j.map(function (x) { return { t: +x.date * 1000, v: +x.tvl }; }).filter(function (x) { return x.v > 0; }));
+    },
+    dex: function (j) {
+      if (!j || !Array.isArray(j.totalDataChart)) throw new Error('dex volume: bad response');
+      return cleanSeries(j.totalDataChart.map(function (x) { return { t: +x[0] * 1000, v: +x[1] }; }).filter(function (x) { return x.v >= 0; }));
+    }
+  };
+  function prepFund(f) {
+    if (!f) return null;
+    var out = { fng: f.fng && f.fng.length ? cleanSeries(f.fng.slice()) : [], stable: f.stable && f.stable.length ? cleanSeries(f.stable.slice()) : [] };
+    return out.fng.length || out.stable.length ? out : null;
+  }
+  // index of the last entry that was public at time T
+  function lastPublic(arr, T, lag) {
+    var lo = 0, hi = arr.length - 1, ans = -1;
+    while (lo <= hi) { var mid = (lo + hi) >> 1; if (arr[mid].t + lag <= T) { ans = mid; lo = mid + 1; } else hi = mid - 1; }
+    return ans;
+  }
+  // what was known at time T (ms)
+  function fundAt(F, T) {
+    var out = { T: T, fng: null, fngC: null, fngT: 0, fng7: null, liq: null, liqV: null, liqT: 0 };
+    if (!F) return out;
+    var k = lastPublic(F.fng, T, FNG_LAG);
+    if (k >= 0 && T - F.fng[k].t < 3 * DAY) {
+      out.fng = F.fng[k].v; out.fngC = isNum(F.fng[k].c) ? F.fng[k].c : fngClass(out.fng); out.fngT = F.fng[k].t;
+      var k7 = lastPublic(F.fng, F.fng[k].t - 7 * DAY, 0);
+      if (k7 >= 0 && F.fng[k].t - F.fng[k7].t <= 8 * DAY) out.fng7 = F.fng[k7].v;
+    }
+    var j = lastPublic(F.stable, T, LLAMA_LAG);
+    if (j >= 0 && T - F.stable[j].t < 4 * DAY) {
+      out.liqV = F.stable[j].v; out.liqT = F.stable[j].t;
+      var j30 = lastPublic(F.stable, F.stable[j].t - 30 * DAY, 0);
+      if (j30 >= 0 && F.stable[j].t - F.stable[j30].t <= 33 * DAY && F.stable[j30].v > 0) out.liq = (F.stable[j].v / F.stable[j30].v - 1) * 100;
+    }
+    return out;
+  }
+  // confidence change for a setup in direction dir, with the reasons
+  function fundAdjust(fs, dir) {
+    var adj = 0, why = [], U = FUND_RULE;
+    if (!fs) return { adj: 0, why: why };
+    if (isNum(fs.fng)) {
+      if (dir > 0 && fs.fng >= U.hot) { adj += U.crowd; why.push([R('fngHot', fs.fng), -1]); }
+      if (dir < 0 && fs.fng <= U.cold) { adj += U.crowd; why.push([R('fngCold', fs.fng), -1]); }
+    }
+    if (isNum(fs.liq)) {
+      if (fs.liq >= U.liq) { adj += dir > 0 ? U.liqAdj : -U.liqAdj; why.push([R('liqUp', fmtPct(fs.liq, 0)), dir > 0 ? 1 : -1]); }
+      else if (fs.liq <= -U.liq) { adj += dir > 0 ? -U.liqAdj : U.liqAdj; why.push([R('liqDown', fmtPct(fs.liq, 0)), dir > 0 ? -1 : 1]); }
+    }
+    return { adj: clamp(adj, U.min, U.max), why: why };
+  }
+  // Runs the same backtest with and without the fundamentals; they are used only if they did not make it worse.
+  function fundTest(ctx, opts) {
+    if (!ctx.fund) return null;
+    var on = backtest(ctx, Object.assign({}, opts, { noFund: false }));
+    var off = backtest(ctx, Object.assign({}, opts, { noFund: true }));
+    var A = {}, B = {}, changed = 0, k;
+    function key(t) { return t.entryT + ':' + t.dir; }
+    for (k = 0; k < on.trades.length; k++) A[key(on.trades[k])] = 1;
+    for (k = 0; k < off.trades.length; k++) B[key(off.trades[k])] = 1;
+    for (k in A) { if (!B[k]) changed++; }
+    for (k in B) { if (!A[k]) changed++; }
+    var delta = on.stats.totalR - off.stats.totalR;
+    return { on: on, off: off, delta: delta, changed: changed, helps: delta >= -1e-9 };
   }
 
   // ------------------------------------------------- support / resistance zones
@@ -845,7 +1023,8 @@ var SolEngine = (function () {
     return w ? Math.round(s / w) : 0;
   }
 
-  // Main entry: analysis of closed 1h candle i. opts.minConf is the alert threshold.
+  // Main entry: analysis of closed 1h candle i. opts.minConf is the alert threshold;
+  // opts.noFund leaves the fundamentals out of the confidence (they are still reported in .fund).
   function evaluate(ctx, i, opts) {
     opts = opts || {};
     var minConf = isNum(opts.minConf) ? opts.minConf : 62;
@@ -861,6 +1040,8 @@ var SolEngine = (function () {
     function zones() { if (!zc) zc = zonesAt(ctx, i, I.close[i]); return zc; }
     var det = detect(ctx, i, h4, zones), best = null;
     var div = det.list.length ? divergenceAt(ctx, i) : 0;
+    var fs = ctx.fund && (det.list.length || opts.withZones) ? fundAt(ctx.fund, cs[i].T + 1) : null;
+    var useFund = fs && !opts.noFund;
 
     for (var k = 0; k < det.list.length; k++) {
       var cd = det.list[k], dir = cd.dir, conf = BASE_CONF[cd.type], why = cd.why.slice();
@@ -882,11 +1063,13 @@ var SolEngine = (function () {
       else if (lv.roomR < 1) { conf -= 10; why.push([R(dir > 0 ? 'nearRes' : 'nearSup', fmtPrice(lv.roomAt)), -1]); }
       if (dir > 0 && I.rsi[i] > 70) { conf -= 8; why.push([R('rsiHigh', I.rsi[i].toFixed(0)), -1]); }
       if (dir < 0 && I.rsi[i] < 30) { conf -= 8; why.push([R('rsiLow', I.rsi[i].toFixed(0)), -1]); }
+      var fa = useFund ? fundAdjust(fs, dir) : null;
+      if (fa) { conf += fa.adj; why = why.concat(fa.why); }
       conf = Math.round(clamp(conf, 5, 95));
       var cand = {
         dir: dir, type: cd.type, name: setupName(cd.type, dir), conf: conf,
         entry: lv.entry, zone: lv.zone, stop: lv.stop, tps: lv.tps, R: lv.R, atr: lv.atr,
-        roomR: lv.roomR, reasons: why, t: cs[i].t, T: cs[i].T, i: i
+        roomR: lv.roomR, reasons: why, t: cs[i].t, T: cs[i].T, i: i, fundAdj: fa ? fa.adj : 0
       };
       if (!best || cand.conf > best.conf) best = cand;
     }
@@ -894,7 +1077,8 @@ var SolEngine = (function () {
       i: i, t: cs[i].t, T: cs[i].T, close: I.close[i], atr: I.atr[i], rsi: I.rsi[i],
       tf: { h1: h1, h4: h4, d1: d1, btc: btc }, bias: bias, biasLabel: trendLabel(bias),
       setup: best, signal: (best && best.conf >= minConf) ? best : null, minConf: minConf,
-      zones: opts.withZones ? zones() : null
+      zones: opts.withZones ? zones() : null,
+      fund: fs ? Object.assign({ used: !!useFund, adjL: fundAdjust(fs, 1).adj, adjS: fundAdjust(fs, -1).adj }, fs) : null
     };
   }
 
@@ -938,23 +1122,32 @@ var SolEngine = (function () {
     if (idx - p.entryI + 1 >= maxHold) exitPart(p, b.c, p.left, b.t, 'time');
   }
 
+  // a news pause (from the bot) holds new signals in one direction: [{ dir, from, to }]
+  function pauseAt(list, dir, t) {
+    if (!list) return null;
+    for (var k = 0; k < list.length; k++) { var p = list[k]; if (p.dir === dir && t >= p.from && t < p.to) return p; }
+    return null;
+  }
+
   function backtest(ctx, opts) {
-    opts = Object.assign({ mode: 'spot', minConf: 62, feePct: 0.1, maxHold: 72, start: 220, riskPct: 1 }, opts || {});
-    var cs = ctx.h1, n = cs.length, trades = [], pos = null, lastEval = null, pending = null, signals = [];
+    opts = Object.assign({ mode: 'spot', minConf: 62, feePct: 0.1, maxHold: 72, start: 220, riskPct: 1, noFund: false, pauses: null }, opts || {});
+    var cs = ctx.h1, n = cs.length, trades = [], pos = null, lastEval = null, pending = null, held = null, signals = [];
     var start = Math.max(60, opts.start);
     for (var i = start; i < n; i++) {
       if (pos && i >= pos.entryI) {
         manageBar(pos, cs[i], i, opts.maxHold);
         if (pos.closed) { trades.push(finishTrade(pos)); pos = null; }
       }
-      var ev = evaluate(ctx, i, { minConf: opts.minConf });
+      var ev = evaluate(ctx, i, { minConf: opts.minConf, noFund: opts.noFund });
       if (i === n - 1) lastEval = ev;
       if (!ev || !ev.signal) continue;
       var sig = ev.signal, allowed = sig.dir > 0 || opts.mode === 'futures';
+      var pz = pauseAt(opts.pauses, sig.dir, sig.T + 1);
       var prevSig = signals.length ? signals[signals.length - 1] : null;
       if (!prevSig || prevSig.dir !== sig.dir || sig.t - prevSig.t > 6 * MS['1h']) {
-        signals.push({ t: sig.t, T: sig.T, i: i, dir: sig.dir, conf: sig.conf, entry: sig.entry, name: sig.name });
+        signals.push({ t: sig.t, T: sig.T, i: i, dir: sig.dir, conf: sig.conf, entry: sig.entry, name: sig.name, held: !!pz });
       }
+      if (pz) { held = { sig: sig, pause: pz }; continue; }
       if (i + 1 >= n) { pending = sig; continue; }
       if (pos && pos.dir !== sig.dir) {
         exitPart(pos, cs[i + 1].o, pos.left, cs[i + 1].t, 'opposite');
@@ -962,8 +1155,10 @@ var SolEngine = (function () {
       }
       if (!pos && allowed) pos = openTrade(sig, cs[i + 1], i + 1, opts.feePct);
     }
+    // a held signal stays news-worthy while its hold lasts
+    if (held && !(n && held.pause.to > cs[n - 1].T + 1)) held = null;
     var stats = summarize(trades, opts.riskPct, cs, start);
-    return { trades: trades, stats: stats, open: pos, pending: pending, lastEval: lastEval, signals: signals, opts: opts };
+    return { trades: trades, stats: stats, open: pos, pending: pending, held: held, lastEval: lastEval, signals: signals, opts: opts };
   }
   function finishTrade(p) {
     var r = p.gross - p.feeR;
@@ -1031,8 +1226,9 @@ var SolEngine = (function () {
     supertrend: supertrend, pivots: pivots, computeIndicators: computeIndicators,
     fromBinance: fromBinance, fromKraken: fromKraken, closedOnly: closedOnly, mergeCandles: mergeCandles, resample: resample,
     tfInfo: tfInfo, buildContext: buildContext, zonesAt: zonesAt, divergenceAt: divergenceAt, evaluate: evaluate,
-    backtest: backtest, positionSize: positionSize, orderBookWalls: orderBookWalls,
+    backtest: backtest, positionSize: positionSize, orderBookWalls: orderBookWalls, pauseAt: pauseAt,
     trade: { open: openTrade, manage: manageBar, exit: exitPart, finish: finishTrade },
+    fund: { SRC: FUND_SRC, RULE: FUND_RULE, parse: parseFund, at: fundAt, adjust: fundAdjust, test: fundTest, label: fngLabel, cls: fngClass },
     trendLabel: trendLabel, regimeLabel: regimeLabel, fmtPrice: fmtPrice, fmtPct: fmtPct, fmtSigned: fmtSigned,
     priceDecimals: priceDecimals, round: round, isNum: isNum,
     setLang: setLang, getLang: getLang, setupName: setupName
@@ -1055,8 +1251,10 @@ const store = {
   set(k, v) { try { localStorage.setItem('radar.' + k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
 };
 const S = {
-  set: Object.assign({ lang: null, mode: 'spot', sens: 'balanced', theme: 'system', sound: true, capital: 1000, risk: 1 }, store.get('set', {})),
+  set: Object.assign({ lang: null, mode: 'spot', sens: 'balanced', theme: 'system', sound: true, capital: 1000, risk: 1, fund: 'auto', bot: '' }, store.get('set', {})),
   alerts: store.get('alerts', []), seen: store.get('seen', {}),
+  fund: store.get('fund', null), fundErr: false, fundT: 0, ab: null, fundOn: false,
+  bot: null, botT: 0, botErr: false, pauseSeen: store.get('pauseSeen', 0),
   h1: [], h4: [], d1: [], m15: [], btc: [],
   price: null, prev: null, t24: null, live: 'connecting',
   ctx: null, ev: null, bt: null, tf15: null, card: null, reasons: {},
@@ -1150,7 +1348,7 @@ const TX = {
   noConn: ['اتصال برقرار نشد', "Can't connect"], noData: ['داده کافی از بایننس دریافت نشد.', 'Not enough data came back from Binance.'],
   noConnMeta: ['اپ مستقیم از همین دستگاه به API بایننس وصل می‌شود. اگر سایت بایننس روی این اینترنت باز نمی‌شود، اپ هم داده نمی‌گیرد.', "The app connects straight from this device to Binance's API. If the Binance website doesn't open on this connection, the app can't get data either."],
   retry: ['تلاش دوباره', 'Try again'],
-  footNote: ['سیگنال‌ها با قوانین ثابت تحلیل تکنیکال روی کندل‌های بسته‌شده ساعتی ساخته می‌شوند و همان قوانینی‌اند که ربات تلگرام استفاده می‌کند. نتیجه گذشته تضمین آینده نیست و این اپ توصیه مالی نیست. آخرین تحلیل: {0}.', 'Signals come from fixed technical-analysis rules applied to closed hourly candles, the same rules the Telegram bot uses. Past results do not guarantee future ones, and this app is not financial advice. Last analysis: {0}.'],
+  footNote: ['سیگنال‌ها با قوانین ثابت تحلیل تکنیکال روی کندل‌های بسته‌شده ساعتی ساخته می‌شوند و همان قوانینی‌اند که ربات تلگرام استفاده می‌کند؛ اگر آزمون فاندامنتال اجازه بدهد، ترس و طمع و جریان استیبل‌کوین‌ها هم اطمینانشان را کمی جابه‌جا می‌کنند. نتیجه گذشته تضمین آینده نیست و این اپ توصیه مالی نیست. آخرین تحلیل: {0}.', 'Signals come from fixed technical-analysis rules applied to closed hourly candles, the same rules the Telegram bot uses; when the fundamentals test allows it, Fear & Greed and the stablecoin flow also nudge their confidence. Past results do not guarantee future ones, and this app is not financial advice. Last analysis: {0}.'],
   chartWait: ['نمودار بعد از دریافت داده نمایش داده می‌شود.', 'The chart appears once the data has loaded.'],
   tfAria: ['بازه زمانی', 'Timeframe'], chartHint: ['برای جزئیات هر کندل، انگشت یا ماوس را روی نمودار ببر', 'Move a finger or the mouse over the chart to see each candle'],
   chartAria: ['نمودار شمعی سولانا', 'SOL candlestick chart'],
@@ -1210,7 +1408,55 @@ const TX = {
   c_dist: ['فاصله تا حد ضرر', 'Distance to the stop'], c_gain: ['سود در هدف {0}', 'Gain at target {0}'],
   c_overSpot: ['این حجم از کل سرمایه‌ات بیشتر است و در اسپات ممکن نیست. با همه سرمایه ({0} SOL) ریسک واقعی {1} می‌شود.', "This size is larger than your whole capital, which spot doesn't allow. With all your capital ({0} SOL) the real risk is {1}."],
   c_lev: ['برای این حجم حدود {0} اهرم لازم است. اهرم بالا یعنی خطر لیکوئید شدن؛ مطمئن شو قیمت لیکوئید دورتر از حد ضرر است.', 'This size needs about {0} leverage. High leverage means liquidation risk; make sure the liquidation price is beyond your stop.'],
-  badPrice: ['یک قیمت معتبر بنویس، مثلاً 150.5', 'Enter a valid price, for example 150.5'], alertAdded: ['هشدار {0} اضافه شد', 'Alert at {0} added']
+  badPrice: ['یک قیمت معتبر بنویس، مثلاً 150.5', 'Enter a valid price, for example 150.5'], alertAdded: ['هشدار {0} اضافه شد', 'Alert at {0} added'],
+  // fundamentals & sentiment
+  fundTitle: ['فاندامنتال و احساسات بازار', 'Fundamentals & sentiment'], fundSub: ['به‌روز {0}', 'Updated {0}'],
+  fngName: ['شاخص ترس و طمع', 'Fear & Greed Index'], fngWeek: ['هفته قبل {0}', 'A week ago {0}'],
+  fngFear: ['ترس', 'Fear'], fngGreed: ['طمع', 'Greed'],
+  f_stable: ['استیبل‌کوین‌های سولانا', 'Stablecoins on Solana'], f_tvl: ['ارزش قفل‌شده (TVL)', 'Solana TVL'], f_dex: ['حجم DEX در ۷ روز', 'DEX volume, 7 days'],
+  f_30d: ['{0} در ۳۰ روز', '{0} in 30 days'], f_wow: ['{0} نسبت به هفته قبل', '{0} vs the week before'],
+  f_effect: ['اثر فعلی روی اطمینان', 'Effect on confidence now'], f_effectVal: ['خرید {0} · فروش {1}', 'Buy {0} · Sell {1}'], f_noEffect: ['بی‌اثر', 'None'],
+  f_used: ['در سیگنال‌ها', 'In signals'],
+  f_usedAuto: ['استفاده می‌شود؛ در آزمون {0} روز اخیر ضرر نزد ({1})', 'Used: it did not hurt over the last {0} days ({1})'],
+  f_notUsedAuto: ['استفاده نمی‌شود؛ در آزمون {0} روز اخیر نتیجه را بدتر کرد ({1})', 'Not used: it made the last {0} days worse ({1})'],
+  f_usedOn: ['همیشه استفاده می‌شود (تنظیم تو)', 'Always used (your setting)'], f_usedOff: ['استفاده نمی‌شود (تنظیم تو)', 'Not used (your setting)'],
+  f_noData: ['داده فاندامنتال از این اینترنت در دسترس نیست؛ سیگنال‌ها فقط تکنیکال‌اند.', "Fundamentals data isn't reachable on this connection, so signals are purely technical."],
+  f_loading: ['در حال دریافت از alternative.me و DefiLlama…', 'Loading from alternative.me and DefiLlama…'],
+  f_rules: ['طمع شدید (۷۶ به بالا) ۶ واحد از اطمینان خرید کم می‌کند و ترس شدید (۲۴ و کمتر) از اطمینان فروش. اگر استیبل‌کوین‌های سولانا در ۳۰ روز ۱۰٪ یا بیشتر زیاد یا کم شوند، ۳ واحد به نفع خرید یا فروش جابه‌جا می‌شود. سیگنال همچنان فقط از ستاپ تکنیکال ساخته می‌شود.', 'Extreme greed (76 and up) takes 6 points off buy confidence, and extreme fear (24 and below) takes 6 off sell confidence. A rise or fall of 10% or more in Solana stablecoins over 30 days moves 3 points toward buying or selling. Signals still come only from a technical setup.'],
+  f_src: ['داده: alternative.me · DefiLlama', 'Data: alternative.me · DefiLlama'],
+  // the with/without test
+  abTitle: ['آزمون فاندامنتال', 'Fundamentals test'], abSub: ['همین {0} روز، با و بدون آن', 'The same {0} days, with and without'],
+  abWith: ['با آن', 'With'], abWithout: ['بدون آن', 'Without'], abTrades: ['معامله', 'Trades'], abWin: ['نرخ برد', 'Win rate'], abTotal: ['جمع نتیجه', 'Total'],
+  abHelps: ['✓ نتیجه را {0} بهتر کرد؛ حالت خودکار از آن استفاده می‌کند.', '✓ It improved the result by {0}, so Auto uses it.'],
+  abEven: ['✓ نتیجه را بدتر نکرد؛ حالت خودکار از آن استفاده می‌کند.', "✓ It didn't make the result worse, so Auto uses it."],
+  abHurts: ['✗ نتیجه را {0} بدتر کرد؛ حالت خودکار کنارش می‌گذارد.', '✗ It made the result {0} worse, so Auto leaves it out.'],
+  abSame: ['در این بازه حتی یک معامله را هم عوض نکرد.', "It didn't change a single trade in this period."],
+  abSmall: ['فقط {0} معامله فرق کرد؛ نمونه کوچک است، پس این را نشانه بدان نه اثبات.', 'Only {0} trades differ. That is a small sample, so treat it as a hint, not proof.'],
+  abMany: ['{0} معامله فرق کرد.', '{0} trades differ.'],
+  abModeOn: ['تو آن را روی «همیشه» گذاشته‌ای.', 'You set it to Always.'], abModeOff: ['تو آن را خاموش کرده‌ای.', 'You switched it off.'],
+  abNoData: ['داده فاندامنتال در دسترس نبود، پس آزمونی انجام نشد.', 'No fundamentals data, so no test could run.'],
+  // settings
+  s_fund: ['فاندامنتال در سیگنال‌ها', 'Fundamentals in signals'], s_fundAuto: ['خودکار', 'Auto'], s_fundOn: ['همیشه', 'Always'], s_fundOff: ['خاموش', 'Off'],
+  s_fundHelp: ['خودکار یعنی شاخص ترس و طمع و جریان استیبل‌کوین‌ها فقط وقتی روی اطمینان سیگنال اثر می‌گذارند که در آزمون همین ۴ ماه نتیجه را بدتر نکرده باشند. در ربات هم FUNDAMENTALS را همین بگذار تا هر دو یکی باشند.', "Auto means Fear & Greed and the stablecoin flow only adjust signal confidence if they didn't make the result worse over the same 4 months. Give the bot's FUNDAMENTALS setting the same option so both agree."],
+  s_bot: ['اخبار از ربات تو', 'News from your bot'],
+  s_botHelp: ['اختیاری. در Apps Script ربات، Deploy و بعد New deployment را بزن، نوع Web app و دسترسی Anyone را انتخاب کن و آدرسی را که با ‎/exec‎ تمام می‌شود اینجا بگذار. بعد اخبار مهم و توقف‌های خبری ربات اینجا هم دیده می‌شود و اپ هم مثل ربات سیگنال‌های خلاف خبر را نگه می‌دارد.', "Optional. In the bot's Apps Script, choose Deploy, then New deployment, pick the type Web app with access Anyone, and paste the address that ends in /exec here. The bot's notable news and news holds then show here too, and the app holds signals against the news just like the bot."],
+  botAddr: ['آدرس Web app ربات', "The bot's Web app address"], botSave: ['ذخیره', 'Save'], botClear: ['حذف', 'Remove'],
+  botBad: ['آدرس باید با https://script.google.com/macros/ شروع شود.', 'The address must start with https://script.google.com/macros/'],
+  botOk: ['وصل است ✓ · ربات اخبار را {0} خوانده', 'Connected ✓ · the bot read the news {0}'],
+  botFail: ['به ربات وصل نشد؛ آدرس و دسترسی Anyone را چک کن.', "Couldn't reach the bot. Check the address and that access is set to Anyone."],
+  botWait: ['در حال اتصال…', 'Connecting…'], botSaved: ['آدرس ربات ذخیره شد', 'Bot address saved'], botRemoved: ['آدرس ربات حذف شد', 'Bot address removed'],
+  // news
+  newsTitle: ['اخبار از ربات', 'News from your bot'], newsSub: ['بررسی {0}', 'Checked {0}'],
+  newsEmpty: ['در ۳ روز گذشته خبر مهمی نبوده.', 'No notable news in the last 3 days.'], newsOff: ['خبرخوان ربات خاموش است (NEWS_ALERTS).', "The bot's news reader is off (NEWS_ALERTS)."],
+  newsFail: ['ربات در دسترس نیست؛ آدرسش را در ابزار چک کن.', "Can't reach the bot; check its address in Tools."], newsWait: ['در حال دریافت از ربات…', 'Loading from the bot…'],
+  sev_1: ['کم‌اهمیت', 'minor'], sev_2: ['قابل توجه', 'notable'], sev_3: ['اثر زیاد', 'high impact'],
+  dirBuys: ['خرید', 'buy'], dirSells: ['فروش', 'sell'], dirShorts: ['شورت', 'short'],
+  holdBanner: ['✋ سیگنال‌های {0} تا {1} به‌خاطر خبر نگه داشته می‌شوند', '✋ {0} signals are on hold until {1} because of news'],
+  f_held: ['سیگنال نگه‌داشته‌شده', 'Signal on hold'], heldVal: ['{0} · {1} · {2}%', '{0} · {1} · {2}%'],
+  heldNote: ['یک ستاپ {0} شکل گرفت، ولی تا {1} سیگنال {0} تازه داده نمی‌شود، چون این خبر خلاف آن است: {2}', 'A {0} setup formed, but there are no new {0} signals until {1} because this news goes against it: {2}'],
+  nHeld: ['سیگنال {0} نگه داشته شد — خبر', '{0} signal on hold — news'], nHeldBody: ['تا {0}: {1}', 'Until {0}: {1}'],
+  nPause: ['خبر خیلی مهم: سیگنال‌های {0} تا {1} نگه داشته می‌شوند', 'High-impact news: {0} signals on hold until {1}'],
+  miniHeld: ['{0} نگه داشته شد تا {1} · خبر', '{0} on hold until {1} · news']
 };
 let LANG = 'fa';
 function t(key, ...a) {
@@ -1264,6 +1510,9 @@ function switchLang(l) {
 
 // ------------------------------------------------------------------ format
 const fp = (x) => E.fmtPrice(x);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const safeUrl = (u) => (/^https?:\/\/[^\s"'<>]+$/i.test(String(u || '')) ? String(u) : '');
+const usd = (x) => (!(x >= 0) ? '—' : x >= 1e9 ? '$' + (x / 1e9).toFixed(x >= 1e10 ? 1 : 2) + 'B' : '$' + (x / 1e6).toFixed(0) + 'M');
 const sgn = (x, d = 1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const N = (s, cls = '') => `<span class="num ${cls}" dir="ltr">${s}</span>`;
 const pc = (x, d = 1) => sgn(x, d) + '%';
@@ -1301,8 +1550,8 @@ async function api(path, timeout = 12000) {
   }
   throw last || new Error('network');
 }
-async function getJSON(url) {
-  const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 10000);
+async function getJSON(url, timeout = 10000) {
+  const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), timeout);
   try { const r = await fetch(url, { cache: 'no-store', signal: ctl.signal }); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.json(); }
   finally { clearTimeout(tm); }
 }
@@ -1350,6 +1599,61 @@ async function loadExtras() {
   S.moodT = Date.now();
   if (shown('signal')) renderSignal();
 }
+
+// Fear & Greed (alternative.me) and Solana's stablecoins, TVL and DEX volume (DefiLlama): daily numbers,
+// so a copy is kept for 3 hours. Returns true when new numbers arrived.
+const FUND_TTL = 3 * H;
+async function loadFund(force) {
+  const old = S.fund && S.fund.v === 1 ? S.fund : null;
+  if (old && !force && Date.now() - old.at < FUND_TTL) return false;
+  const src = E.fund.SRC, P = E.fund.parse;
+  const r = await Promise.allSettled([getJSON(src.fng + '200', 15000), getJSON(src.stable, 25000), getJSON(src.tvl, 25000), getJSON(src.dex, 25000)]);
+  const take = (x, fn, n) => { try { return x.status === 'fulfilled' ? fn(x.value).slice(-n) : null; } catch (e) { return null; } };
+  const f = { v: 1, at: Date.now(), fng: take(r[0], P.fng, 200), stable: take(r[1], P.stable, 200), tvl: take(r[2], P.tvl, 60), dex: take(r[3], P.dex, 60) };
+  if (old) ['fng', 'stable', 'tvl', 'dex'].forEach((k) => { if (!f[k] && old[k]) f[k] = old[k]; });
+  if (!f.fng && !f.stable) { S.fundErr = true; return false; }
+  S.fund = f; S.fundErr = false;
+  store.set('fund', f);
+  return true;
+}
+
+// The bot's public feed (its Apps Script web app): notable news and news holds.
+const BOT_RE = /^https:\/\/script\.google(usercontent)?\.com\/macros\/[^\s"'<>]+$/;
+function jsonp(url, ms = 15000) {
+  return new Promise((resolve, reject) => {
+    const cb = '__radarFeed' + Date.now().toString(36), sc = document.createElement('script');
+    let tm = 0;
+    const done = (err, v) => { clearTimeout(tm); try { delete window[cb]; } catch (e) { window[cb] = undefined; } sc.remove(); if (err) reject(err); else resolve(v); };
+    tm = setTimeout(() => done(new Error('timeout')), ms);
+    window[cb] = (v) => done(null, v);
+    sc.onerror = () => done(new Error('jsonp'));
+    sc.src = url + (url.includes('?') ? '&' : '?') + 'cb=' + cb;
+    document.head.appendChild(sc);
+  });
+}
+const pauseKey = (b) => (b && Array.isArray(b.pauses) ? JSON.stringify(b.pauses.map((p) => [p.dir, p.from, p.to])) : '');
+const botPauses = () => (S.bot && Array.isArray(S.bot.pauses) ? S.bot.pauses.filter((p) => p && (p.dir === 1 || p.dir === -1) && p.to > p.from) : null);
+const activeHolds = () => (botPauses() || []).filter((p) => p.from <= Date.now() && p.to > Date.now());
+async function loadBot() {
+  const url = S.set.bot;
+  if (!url || !BOT_RE.test(url)) { const had = !!S.bot; S.bot = null; S.botErr = false; return had; }
+  let j = null;
+  try { j = await getJSON(url, 20000); } catch (e) { try { j = await jsonp(url); } catch (e2) { j = null; } }
+  S.botT = Date.now();
+  if (!j || j.app !== 'sol-radar') { S.botErr = true; return false; }
+  const changed = pauseKey(j) !== pauseKey(S.bot);
+  S.bot = j; S.botErr = false;
+  // one notification per new hold
+  (j.pauses || []).forEach((p) => {
+    if (p.from > S.pauseSeen && p.to > Date.now()) {
+      S.pauseSeen = p.from; store.set('pauseSeen', p.from);
+      if (S.status === 'ok') notify(t('nPause', t(dirKey(p.dir)), fmtHM.format(new Date(p.to))), holdTitle(p), 'pause-' + p.from, 'sell');
+    }
+  });
+  return changed;
+}
+const dirKey = (d) => (d > 0 ? 'dirBuys' : S.set.mode === 'spot' ? 'dirSells' : 'dirShorts');
+const holdTitle = (p) => (LANG === 'fa' && p.fa ? p.fa : p.title || '');
 
 // ------------------------------------------------------------------ live price
 let ws = null, wsFails = 0, pollTimer = null;
@@ -1407,10 +1711,17 @@ function setTicker(p, t24) {
 function analyze(initial) {
   const now = Date.now(), h1 = E.closedOnly(S.h1, now);
   if (h1.length < 300) { S.status = 'error'; S.err = 'short'; return; }
-  const ctx = E.buildContext({ h1, h4: E.closedOnly(S.h4, now), d1: E.closedOnly(S.d1, now), btc4h: S.btc.length ? E.closedOnly(S.btc, now) : null });
+  const F = S.fund && (S.fund.fng || S.fund.stable) ? { fng: S.fund.fng || [], stable: S.fund.stable || [] } : null;
+  const ctx = E.buildContext({ h1, h4: E.closedOnly(S.h4, now), d1: E.closedOnly(S.d1, now), btc4h: S.btc.length ? E.closedOnly(S.btc, now) : null, fund: F });
   const minConf = thr();
-  const bt = E.backtest(ctx, { mode: S.set.mode, minConf, start: Math.max(220, h1.length - 24 * 120) });
-  const ev = E.evaluate(ctx, h1.length - 1, { minConf, withZones: true });
+  const opts = { mode: S.set.mode, minConf, start: Math.max(220, h1.length - 24 * 120), pauses: botPauses() };
+  // the same replay with and without the fundamentals; Auto keeps them only if they did not make it worse
+  const ft = ctx.fund ? E.fund.test(ctx, opts) : null;
+  S.ab = ft ? { on: ft.on.stats, off: ft.off.stats, delta: ft.delta, changed: ft.changed, helps: ft.helps } : null;
+  S.fundOn = !!ft && (S.set.fund === 'on' || (S.set.fund === 'auto' && ft.helps));
+  S.fundT = S.fund ? S.fund.at : 0; S.pauseK = pauseKey(S.bot);
+  const bt = ft ? (S.fundOn ? ft.on : ft.off) : E.backtest(ctx, Object.assign({ noFund: true }, opts));
+  const ev = E.evaluate(ctx, h1.length - 1, { minConf, withZones: true, noFund: !S.fundOn });
   const m15 = E.closedOnly(S.m15, now);
   S.tf15 = m15.length > 80 ? E.tfInfo(m15, E.computeIndicators(m15), m15.length - 1) : null;
   Object.assign(S, { ctx, bt, ev, analyzedAt: now, lastClosedT: h1[h1.length - 1].t, reasons: {} });
@@ -1421,6 +1732,7 @@ function makeCard() {
   const bt = S.bt, open = bt.open, pend = bt.pending;
   if (pend && (!open || open.dir !== pend.dir)) return { kind: 'new', o: pend, prev: open };
   if (open) return { kind: 'active', o: open };
+  if (bt.held && bt.held.pause.to > Date.now()) return { kind: 'wait', held: bt.held };
   return { kind: 'wait' };
 }
 function reasonsFor(o) {
@@ -1428,7 +1740,7 @@ function reasonsFor(o) {
   if (S.reasons[o.sigT]) return S.reasons[o.sigT];
   const cs = S.ctx.h1;
   for (let i = cs.length - 1; i >= 0; i--) {
-    if (cs[i].t === o.sigT) { const ev = E.evaluate(S.ctx, i, { minConf: 0 }); S.reasons[o.sigT] = ev && ev.setup ? ev.setup.reasons : []; break; }
+    if (cs[i].t === o.sigT) { const ev = E.evaluate(S.ctx, i, { minConf: 0, noFund: !S.fundOn }); S.reasons[o.sigT] = ev && ev.setup ? ev.setup.reasons : []; break; }
   }
   return S.reasons[o.sigT] || [];
 }
@@ -1463,7 +1775,7 @@ function updateLive(initial) {
   const card = liveCard(), st = stateOf(card), tr = card && card.kind === 'active' ? card.o : null;
   S.liveCard = card;
   const seen = S.seen || {};
-  const next = { state: st, trade: tr ? tr.entryT : 0, hit: tr ? tr.hit : 0, sig: card && card.kind === 'new' ? card.o.t : 0 };
+  const next = { state: st, trade: tr ? tr.entryT : 0, hit: tr ? tr.hit : 0, sig: card && card.kind === 'new' ? card.o.t : 0, held: card && card.held ? card.held.sig.t : 0 };
   if (!initial && seen.state) {
     if (tr && tr.entryT === seen.trade) {
       for (let k = seen.hit || 0; k < Math.min(tr.hit, 2); k++) {
@@ -1471,6 +1783,7 @@ function updateLive(initial) {
       }
     }
     if (st !== seen.state || (next.sig && next.sig !== seen.sig)) notifyState(seen, st, card);
+    else if (next.held && next.held !== seen.held) notifyHeld(card);
   }
   S.seen = next;
   store.set('seen', S.seen);
@@ -1490,11 +1803,18 @@ function notifyState(seen, st, card) {
     : (seen.trade && S.bt ? S.bt.trades.find((x) => x.entryT === seen.trade) : null);
   if (done) {
     notify(t(done.reason === 'stop' ? 'nWaitStop' : done.r > 0 ? 'nWaitWin' : 'nWaitClosed'), t('nResult', sgn(done.r, 2), t('reason_' + done.reason)), 'state-close-' + done.entryT, done.r > 0 ? 'buy' : 'sell');
+  } else if (card && card.held) {
+    notifyHeld(card);
   } else if (card && card.invalid) {
     notify(t('nWaitInvalid'), t('nInvalidBody', fp(card.invalid.stop)), 'state-void-' + card.invalid.t, 'sell');
   } else {
     notify(t('nWaitPlain'), t('nWaitBody'), 'state-wait-' + Date.now(), 'sell');
   }
+}
+
+function notifyHeld(card) {
+  const h = card.held, o = h.sig;
+  notify(t('nHeld', t(o.dir > 0 ? 'w_buy' : S.set.mode === 'spot' ? 'w_sell' : 'w_short')), t('nHeldBody', fmtHM.format(new Date(h.pause.to)), holdTitle(h.pause)), 'held-' + o.t, 'sell');
 }
 
 // ------------------------------------------------------------------ notifications
@@ -1662,17 +1982,19 @@ function waitHTML(c) {
   const facts = [];
   if (c && c.closedLive) facts.push([t('f_event'), `${t('reason_' + c.closedLive.reason)} · ${N(sgn(c.closedLive.r, 2) + 'R')}`]);
   if (c && c.invalid) facts.push([t('f_event'), t('miniInvalid')]);
+  if (c && c.held) facts.push([t('f_held'), t('heldVal', t(c.held.sig.dir > 0 ? 'side_buy' : 'side_sell'), N(fp(c.held.sig.entry)), N(c.held.sig.conf))]);
   facts.push([t('f_bias'), `${ev.biasLabel} ${N(sgn(ev.bias, 0))}`]);
   facts.push([t('f_sup'), sup ? `${N(fp(sup.price))} <span class="faint">${N(pc(dist(sup.price)))}</span>` : '—']);
   facts.push([t('f_res'), res ? `${N(fp(res.price))} <span class="faint">${N(pc(dist(res.price)))}</span>` : '—']);
-  if (ev.setup) facts.push([t('f_setup'), t('setupVal', t(ev.setup.dir > 0 ? 'side_buy' : 'side_sell'), N(ev.setup.conf + '%'), N(thr() + '%'))]);
-  if (last) facts.push([t('f_last'), t('lastVal', t(last.dir > 0 ? 'side_buy' : 'side_sell'), N(fp(last.entry)), ago(last.T + 1))]);
+  const heldT = c && c.held ? c.held.sig.t : -1;
+  if (ev.setup && ev.setup.t !== heldT) facts.push([t('f_setup'), t('setupVal', t(ev.setup.dir > 0 ? 'side_buy' : 'side_sell'), N(ev.setup.conf + '%'), N(thr() + '%'))]);
+  if (last && last.t !== heldT) facts.push([t('f_last'), t('lastVal', t(last.dir > 0 ? 'side_buy' : 'side_sell'), N(fp(last.entry)), ago(last.T + 1))]);
   return `<article class="ticket" data-st="wait">
     <div class="t-head"><h1 class="t-word">${t('w_wait')}</h1><div class="t-name">${t('waitName')}</div>
       <div class="t-meta">${t('waitMeta', `<span data-countdown>${countdown()}</span>`)}</div></div>
     <div class="perf"></div>
     <div class="facts">${facts.map(([k, v]) => `<div class="fact"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}</div>
-    <p class="note">${t('waitNote')}</p>
+    <p class="note">${c && c.held ? t('heldNote', t(dirKey(c.held.sig.dir)), N(fmtHM.format(new Date(c.held.pause.to))), `<span dir="auto">${esc(holdTitle(c.held.pause))}</span>`) : t('waitNote')}</p>
     <div class="t-actions only-narrow"><a class="btn" href="#chart">${t('seeChart')}</a></div>
     <div style="height:18px"></div>
   </article>`;
@@ -1745,8 +2067,65 @@ function renderSignal() {
       <div class="t-actions"><button class="btn primary" type="button" data-act="retry">${t('retry')}</button></div><div style="height:18px"></div></article>`);
     return;
   }
-  put(ticketHTML(), `<div class="blk">${radarHTML()}</div><div class="blk">${ladderHTML()}</div><div class="blk">${moodHTML()}</div>` +
+  const news = newsHTML();
+  put(ticketHTML(), `<div class="blk b-radar">${radarHTML()}</div><div class="blk b-ladder">${ladderHTML()}</div><div class="blk b-fund">${fundHTML()}</div>` +
+    (news ? `<div class="blk b-news">${news}</div>` : '') + `<div class="blk b-mood">${moodHTML()}</div>` +
     `<p class="prose s-note" style="margin:6px 2px 0">${t('footNote', ago(S.analyzedAt))}</p>`);
+  el.querySelector('.s-ctx').classList.toggle('has-news', !!news);
+}
+// last value of a daily series and its change against the value `days` earlier
+function seriesChange(a, days) {
+  if (!a || a.length < 2) return null;
+  const last = a[a.length - 1];
+  for (let k = a.length - 2; k >= 0; k--) { if (last.t - a[k].t >= days * 864e5) return { v: last.v, ch: a[k].v > 0 ? (last.v / a[k].v - 1) * 100 : null }; }
+  return { v: last.v, ch: null };
+}
+// the last 7 complete days against the 7 before
+function weekSum(a) {
+  const done = (a || []).filter((x) => x.t + 864e5 <= Date.now());
+  if (done.length < 7) return null;
+  const sum = (arr) => arr.reduce((s, x) => s + x.v, 0), w = sum(done.slice(-7)), prev = done.length >= 14 ? sum(done.slice(-14, -7)) : 0;
+  return { v: w, ch: prev > 0 ? (w / prev - 1) * 100 : null };
+}
+function fundHTML() {
+  const f = S.fund, snap = S.ev && S.ev.fund;
+  const head = `<div class="sec"><h2>${t('fundTitle')}</h2><span>${f ? t('fundSub', ago(f.at)) : ''}</span></div>`;
+  if (!f || (!f.fng && !f.stable)) return head + `<div class="card muted">${t(S.fundErr ? 'f_noData' : 'f_loading')}</div>`;
+  let meter = '';
+  if (snap && snap.fng != null) {
+    const v = snap.fng;
+    meter = `<div class="fng"><div class="fng-top"><span class="k">${t('fngName')}</span><span class="v">${N(v)} ${E.fund.label(v, snap.fngC)}</span></div>
+      <div class="fng-bar" aria-hidden="true"><i style="left:${Math.max(0, Math.min(100, v))}%"></i></div>
+      <div class="fng-scale"><span>${t('fngFear')}</span><span>${snap.fng7 != null ? t('fngWeek', N(snap.fng7)) : ''}</span><span>${t('fngGreed')}</span></div></div>`;
+  }
+  const rows = [];
+  if (snap && snap.liqV != null) rows.push([t('f_stable'), usd(snap.liqV), snap.liq != null ? t('f_30d', N(pc(snap.liq))) : '']);
+  const tv = seriesChange(f.tvl, 30);
+  if (tv) rows.push([t('f_tvl'), usd(tv.v), tv.ch != null ? t('f_30d', N(pc(tv.ch))) : '']);
+  const dx = weekSum(f.dex);
+  if (dx) rows.push([t('f_dex'), usd(dx.v), dx.ch != null ? t('f_wow', N(pc(dx.ch))) : '']);
+  const eff = S.fundOn && snap && (snap.adjL || snap.adjS) ? t('f_effectVal', N(sgn(snap.adjL, 0)), N(sgn(snap.adjS, 0))) : t('f_noEffect');
+  const used = S.set.fund === 'on' ? t('f_usedOn') : S.set.fund === 'off' ? t('f_usedOff')
+    : S.ab ? t(S.ab.helps ? 'f_usedAuto' : 'f_notUsedAuto', dg(Math.round(S.ab.on.days)), N(sgn(S.ab.delta, 1) + 'R')) : '—';
+  return head + `<div class="card fund">${meter}
+    <div class="frows">${rows.map(([k, v, h]) => `<div class="frow"><span class="k">${k}</span><span class="v">${N(v)}</span><span class="h">${h}</span></div>`).join('')}</div>
+    <div class="fuse"><div><span class="k">${t('f_effect')}</span><span>${eff}</span></div><div><span class="k">${t('f_used')}</span><span>${used}</span></div></div>
+    <details class="frules"><summary>${t('f_src')}</summary><p>${t('f_rules')}</p></details></div>`;
+}
+function newsHTML() {
+  if (!S.set.bot) return '';
+  const b = S.bot, scanT = b && b.news ? b.news.scanT : 0;
+  const head = `<div class="sec"><h2>${t('newsTitle')}</h2><span>${scanT ? t('newsSub', ago(scanT)) : ''}</span></div>`;
+  if (!b) return head + `<div class="card muted">${t(S.botErr ? 'newsFail' : 'newsWait')}</div>`;
+  const holds = activeHolds().map((p) => `<div class="hold">${t('holdBanner', t(dirKey(p.dir)), N(fmtHM.format(new Date(p.to))))}<small dir="auto">${esc(holdTitle(p))}</small></div>`).join('');
+  const items = (Array.isArray(b.items) ? b.items : []).slice(0, 6);
+  const list = items.length ? items.map((x) => {
+    const url = safeUrl(x.link), title = esc(LANG === 'fa' && x.fa ? x.fa : x.title);
+    const srcs = esc((Array.isArray(x.srcs) && x.srcs.length ? x.srcs : [x.src]).join(' · '));
+    return `<div class="nrow"><i class="ndot ${x.dir < 0 ? 'neg' : x.dir > 0 ? 'pos' : ''}" aria-hidden="true"></i><div>${url ? `<a href="${url}" target="_blank" rel="noopener" dir="auto">${title}</a>` : `<span dir="auto">${title}</span>`}
+      <small><bdi>${srcs}</bdi> · ${ago(x.t || x.d)} · ${t('sev_' + Math.max(1, Math.min(3, x.sev | 0)))}</small></div></div>`;
+  }).join('') : `<p class="muted">${t(b.news && b.news.on === false ? 'newsOff' : 'newsEmpty')}</p>`;
+  return head + `<div class="card news">${holds}${list}</div>`;
 }
 
 // ------------------------------------------------------------------ chart view
@@ -1917,12 +2296,26 @@ function renderStats() {
       ${kpi(t('k_dd'), N('−' + s.maxDD.toFixed(1) + 'R'), t('k_ddSub'))}
     </div>
     ${s.trades ? `<div class="card eqbox">${equitySVG(s.curve)}<div class="eqlab"><span>${when(s.curve[0].t)}</span><span>${N(sgn(s.totalR, 1) + 'R')}</span></div></div>` : ''}
+    ${abHTML()}
     <div class="sec"><h2>${t('howTitle')}</h2></div>
     <div class="card prose"><p>${t('how1', days)}</p><p>${t('how2')}</p></div></div>
     <div class="col"><div class="sec"><h2>${t('tradesTitle')}</h2><span>${t('tradesSub')}</span></div>
     <div class="card">${tr.length ? tr.slice(0, 40).map((x) => `<div class="trow"><span class="badge ${x.dir > 0 ? 'buy' : 'sell'}">${t(x.dir > 0 ? 'b_long' : 'b_short')}</span>
       <span>${N(fp(x.entry))} <span class="faint">${t('arrow')}</span> ${N(fp(x.exitPx))}</span><span class="res num ${x.r > 0 ? 'up' : 'down'}" dir="ltr">${sgn(x.r, 2)}R</span>
       <small>${when(x.entryT)} · ${t('reason_' + x.reason)} · ${t('hoursN', dg(x.hours))} · ${x.name}</small></div>`).join('') : `<p class="muted">${t('noTrades')}</p>`}</div></div>`;
+}
+
+function abHTML() {
+  const a = S.ab;
+  if (!a) return `<div class="sec"><h2>${t('abTitle')}</h2></div><div class="card muted">${t(S.fund || S.fundErr ? 'abNoData' : 'f_loading')}</div>`;
+  const col = (st) => [N(st.trades), N(st.winRate.toFixed(0) + '%'), N(sgn(st.totalR, 1) + 'R')];
+  const w = col(a.on), wo = col(a.off), on = S.fundOn;
+  const rows = [['abTrades', 0], ['abWin', 1], ['abTotal', 2]].map(([k, i]) => `<span class="k">${t(k)}</span><span class="v${on ? ' sel' : ''}">${w[i]}</span><span class="v${on ? '' : ' sel'}">${wo[i]}</span>`).join('');
+  let v = a.changed === 0 ? t('abSame') : a.delta > 0.05 ? t('abHelps', N(sgn(a.delta, 1) + 'R')) : a.helps ? t('abEven') : t('abHurts', N(Math.abs(a.delta).toFixed(1) + 'R'));
+  if (a.changed) v += ' ' + t(a.changed < 10 ? 'abSmall' : 'abMany', dg(a.changed));
+  if (S.set.fund !== 'auto') v += ' ' + t(S.set.fund === 'on' ? 'abModeOn' : 'abModeOff');
+  return `<div class="sec"><h2>${t('abTitle')}</h2><span>${t('abSub', dg(Math.round(a.on.days)))}</span></div>
+    <div class="card ab"><div class="abt"><span></span><span class="h">${t('abWith')}</span><span class="h">${t('abWithout')}</span>${rows}</div><p class="abv">${v}</p></div>`;
 }
 
 // ------------------------------------------------------------------ tools view
@@ -1971,6 +2364,7 @@ function renderTools() {
       <div class="setting"><span class="k">${t('s_lang')}</span>${seg('lang', [['fa', 'فارسی', 'fa'], ['en', 'English', 'en']], LANG)}</div>
       <div class="setting"><span class="k">${t('s_mode')}</span>${seg('mode', [['spot', t('s_modeSpot')], ['futures', t('s_modeFut')]], S.set.mode)}<span class="h">${t('s_modeHelp')}</span></div>
       <div class="setting"><span class="k">${t('s_sens')}</span>${seg('sens', [['conservative', t('s_cons')], ['balanced', t('s_bal')], ['aggressive', t('s_agg')]], S.set.sens)}<span class="h">${t('s_sensHelp', N('70%'), N('62%'), N('55%'))}</span></div>
+      <div class="setting"><span class="k">${t('s_fund')}</span>${seg('fund', [['auto', t('s_fundAuto')], ['on', t('s_fundOn')], ['off', t('s_fundOff')]], S.set.fund)}<span class="h">${t('s_fundHelp')}</span></div>
       <div class="setting"><span class="k">${t('s_theme')}</span>${seg('theme', [['system', t('s_auto')], ['light', t('s_light')], ['dark', t('s_dark')]], S.set.theme)}</div>
       <div class="setting"><span class="k">${t('s_sound')}</span>${seg('sound', [['true', t('on')], ['false', t('off')]], S.set.sound)}</div>
       <div class="setting"><span class="k">${t('s_notif')}</span>${notifCtl}<span class="h">${t('notifHelp')}</span></div>
@@ -1986,6 +2380,14 @@ function renderTools() {
       <li>${t('tg2', '<span class="num" dir="ltr">radar-google.gs</span>', '<span dir="ltr">script.google.com</span>')}</li>
       <li>${t('tg3', '<span dir="ltr">/start</span>', '<span class="num" dir="ltr">setup</span>')}</li>
     </ol><p style="margin-top:8px">${t('tgAfter')}</p></div>
+
+    <div class="sec"><h2>${t('s_bot')}</h2></div>
+    <div class="card form">
+      <p class="prose">${t('s_botHelp')}</p>
+      <div class="field"><label for="b-url">${t('botAddr')}</label><input id="b-url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(S.set.bot)}"></div>
+      <div class="brow"><button class="btn" type="button" data-act="bot-save">${t('botSave')}</button>${S.set.bot ? `<button class="btn ghost" type="button" data-act="bot-clear">${t('botClear')}</button>` : ''}</div>
+      ${S.set.bot ? `<p class="bstat">${S.bot ? `<span class="up">${t('botOk', S.bot.news && S.bot.news.scanT ? ago(S.bot.news.scanT) : '—')}</span>` : S.botErr ? `<span class="down">${t('botFail')}</span>` : t('botWait')}</p>` : ''}
+    </div>
 
     <div class="card prose"><p><b>${t('important')}</b> ${t('disclaimer')}</p></div></div>`;
   calcUpdate();
@@ -2052,6 +2454,7 @@ function miniState() {
   if (st === 'wait') {
     if (c && c.closedLive) m.line = t('miniClosed', N(sgn(c.closedLive.r, 2) + 'R'));
     else if (c && c.invalid) m.line = t('miniInvalid');
+    else if (c && c.held) m.line = t('miniHeld', t(c.held.sig.dir > 0 ? 'w_buy' : S.set.mode === 'spot' ? 'w_sell' : 'w_short'), N(fmtHM.format(new Date(c.held.pause.to))));
     else m.line = t('miniNext', N(countdown()));
     return m;
   }
@@ -2098,7 +2501,7 @@ document.addEventListener('click', (e) => {
     if (k === 'sound') val = val === 'true';
     S.set[k] = val; store.set('set', S.set);
     if (k === 'theme') applyTheme();
-    if ((k === 'mode' || k === 'sens') && S.status === 'ok') { analyze(true); S.calc = null; }
+    if ((k === 'mode' || k === 'sens' || k === 'fund') && S.status === 'ok') { analyze(true); S.calc = null; }
     renderTools();
     return;
   }
@@ -2117,6 +2520,14 @@ document.addEventListener('click', (e) => {
     S.alerts.push({ id: Date.now(), p, armed: true }); store.set('alerts', S.alerts); renderTools();
     toast(t('alertAdded', fp(p)));
   }
+  if (act === 'bot-save') {
+    const url = String($('#b-url').value || '').trim();
+    if (url && !BOT_RE.test(url)) { toast(t('botBad')); return; }
+    S.set.bot = url; store.set('set', S.set); S.bot = null; S.botErr = false;
+    toast(t(url ? 'botSaved' : 'botRemoved')); renderTools();
+    loadBot().catch(() => false).then(() => { if (S.status === 'ok') analyze(true); render(); });
+  }
+  if (act === 'bot-clear') { S.set.bot = ''; store.set('set', S.set); S.bot = null; S.botErr = false; toast(t('botRemoved')); if (S.status === 'ok') analyze(true); render(); }
   if (act === 'alert-del') { S.alerts = S.alerts.filter((a) => String(a.id) !== b.dataset.id); store.set('alerts', S.alerts); renderTools(); }
 });
 document.addEventListener('input', (e) => { if (e.target.closest('#calc')) calcUpdate(); });
@@ -2159,18 +2570,37 @@ setInterval(() => {
   if (S.status === 'ok' && sinceClose > 8000 && sinceClose < 15000 && Date.now() - (S.lastRefresh || 0) > 20000) refresh();
 }, 1000);
 
+// fundamentals (every 3 hours) and the bot's news feed (every 10 minutes); a change re-runs the analysis
+async function refreshSide() {
+  await Promise.all([loadFund().catch(() => false), loadBot().catch(() => false)]);
+  sideChanged(false);
+}
+function sideChanged(initial) {
+  if (S.status !== 'ok') return;
+  if (S.fundT !== (S.fund ? S.fund.at : 0) || S.pauseK !== pauseKey(S.bot)) analyze(initial);
+  if (shown('signal')) renderSignal();
+  if (shown('stats')) renderStats();
+  if (shown('tools') && !(document.activeElement && document.activeElement.tagName === 'INPUT')) renderTools();
+  renderMini();
+}
 async function boot() {
   S.status = 'loading'; applyTheme(); route();
-  try { await loadAll(); analyze(true); if (S.status === 'loading') S.status = 'ok'; }
-  catch (e) { S.status = 'error'; S.err = String(e && e.message || e); setLive('off'); render(); return; }
+  const side = Promise.all([loadFund().catch(() => false), loadBot().catch(() => false)]);
+  try {
+    await loadAll();
+    await Promise.race([side, new Promise((r) => setTimeout(r, 4000))]);
+    analyze(true); if (S.status === 'loading') S.status = 'ok';
+  } catch (e) { S.status = 'error'; S.err = String(e && e.message || e); setLive('off'); render(); return; }
   render();
+  side.then(() => sideChanged(true));
   if (!ws) connectWS();
   loadExtras();
   if (!boot.started) {
     boot.started = true;
     setInterval(refresh, 60000);
     setInterval(loadExtras, 5 * 60000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) { setBadge(false); refresh(); loadExtras(); } });
+    setInterval(refreshSide, 10 * 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { setBadge(false); refresh(); loadExtras(); refreshSide(); } });
   }
 }
 applyLang(S.set.lang || deviceLang());
